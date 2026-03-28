@@ -1,6 +1,6 @@
-import { Hono } from "npm:hono";
-import { cors } from "npm:hono/cors";
-import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { load } from "load";
 
 const env = await load({ envPath: "./server/.env" });
 
@@ -14,6 +14,53 @@ app.use("*", cors({
 
 // Routes
 app.get("/api/health", (c) => c.json({ status: "ok", message: "Server is running!" }));
+
+// Spotify login -- redirects user to Spotify
+app.get("/api/login", (c) => {
+    const scopes = [
+        "user-top-read",
+        "user-follow-read",
+        "playlist-modify-public",
+        "playlist-modify-private",
+    ].join(" ");
+
+    const params = new URLSearchParams({
+        client_id: env["SPOTIFY_CLIENT_ID"]!,
+        response_type: "code",
+        redirect_uri: env["SPOTIFY_REDIRECT_URI"]!,
+        scope: scopes,
+    });
+
+    return c.redirect(`https://accounts.spotify.com/authorize?${params}`);
+});
+
+app.get("/callback", async (c) => {
+    const code = c.req.query("code");
+    if (!code) {
+        return c.json({ error: "Authorization code not found" }, 400);
+    }
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Basic " + btoa(`${env["SPOTIFY_CLIENT_ID"]}:${env["SPOTIFY_CLIENT_SECRET"]}`),
+        },
+        body: new URLSearchParams({
+            grant_type: "authorization_code",
+            code,
+            redirect_uri: env["SPOTIFY_REDIRECT_URI"],
+        }),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+        return c.json({ error: data.error }, 400);
+    }
+
+    return c.json({ access_token: data.access_token });
+});
 
 // Start server
 Deno.serve({ port: Number(env["PORT"]) || 5000 }, app.fetch);
