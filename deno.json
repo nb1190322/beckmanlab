@@ -1,0 +1,9 @@
+{
+  "nodeModulesDir": "auto",
+  "imports": {
+    "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^4.7.0",
+    "hono": "npm:hono",
+    "hono/cors": "npm:hono/cors",
+    "vite": "npm:vite@^5.4.21"
+  }
+}
