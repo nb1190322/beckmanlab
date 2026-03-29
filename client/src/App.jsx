@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Landing() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div class="container">
+      <h1> Friend Wrapped </h1>
+      <p> Compare your music taste with your friends and discover new music together! </p>
+      <a href="https://beckmanlab.dev/api/login">
+        <button className="spotify-btn">Login with Spotify</button>
+      </a>
+    </div>
   )
 }
 
-export default App
+function Dashboard() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('https://beckmanlab.dev/api/me', { credentials: 'include' })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div className="container"><p>Loading...</p></div>;
+  if (error) return <div className="container"><p>Not logged in. <a href="https://beckmanlab.dev/api/login">Login here</a></p></div>;
+
+  return (
+    <div className="container">
+      <h1>Welcome, {user.display_name}!</h1>
+      <img src={user.images[0]?.url} alt="profile" className="avatar" />
+      <p>{user.followers?.total} followers on Spotify</p>
+      <p>Country: {user.country} </p>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
