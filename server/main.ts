@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { setCookie, getCookie } from "hono/cookie";
 import { load } from "load";
 
 const env = await load({ envPath: "./server/.env" });
@@ -59,7 +60,55 @@ app.get("/callback", async (c) => {
         return c.json({ error: data.error }, 400);
     }
 
-    return c.json({ access_token: data.access_token });
+    const accessToken = data.access_token;
+
+    const profileRes = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+        },
+    });
+    const profile = await profileRes.json();
+
+    const topArtistsRes = await fetch("https://api.spotify.com/v1/me/top/artists?limit=20", {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+        },
+    });
+    const topArtists = await topArtistsRes.json();
+
+    const topTracksRes = await fetch("https://api.spotify.com/v1/me/top/tracks?limit=20", {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+        },
+    });
+    const topTracks = await topTracksRes.json();
+
+    setCookie(c, "spotify_token", accessToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 3600, // 1 hour
+        path: "/",
+    });
+
+    // TODO: Save to MongoDB
+    console.log("Us logged in:", profile.display_name);
+    console.log("Top Artists:", topArtists.items.map((a: any) => a.name));
+    return c.redirect("https://beckmanlab.dev/dashboard");
+});
+
+app.get("/api/me", async (c) => {
+    const token = getCookie(c, "spotify_token");
+    if (!token) {
+        return c.json({ error: "Not authenticated" }, 401);
+    }
+
+    const res = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+    const profile = await res.json();
+    return c.json(profile);
 });
 
 // Start server
