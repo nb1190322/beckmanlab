@@ -4,7 +4,7 @@ import "./App.css";
 
 function Landing() {
   return (
-    <div class="container">
+    <div className="container">
       <h1> Friend Wrapped </h1>
       <p> Compare your music taste with your friends and discover new music together! </p>
       <a href="https://beckmanlab.dev/api/login">
@@ -20,7 +20,7 @@ function Dashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://beckmanlab.dev/api/me', { credentials: 'include' })
+    fetch('/api/me', { credentials: 'include' })
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to fetch user data');
