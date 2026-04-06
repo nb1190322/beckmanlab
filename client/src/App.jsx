@@ -7,7 +7,7 @@ function Landing() {
     <div className="container">
       <h1> Friend Wrapped </h1>
       <p> Compare your music taste with your friends and discover new music together! </p>
-      <a href="https://beckmanlab.dev/api/login">
+      <a href="/api/login">
         <button className="spotify-btn">Login with Spotify</button>
       </a>
     </div>
