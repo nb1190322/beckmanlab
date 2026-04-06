@@ -38,7 +38,7 @@ function Dashboard() {
   }, []);
 
   if (loading) return <div className="container"><p>Loading...</p></div>;
-  if (error) return <div className="container"><p>Not logged in. <a href="https://beckmanlab.dev/api/login">Login here</a></p></div>;
+  if (error) return <div className="container"><p>Not logged in. <a href="/api/login">Login here</a></p></div>;
 
   return (
     <div className="container">
