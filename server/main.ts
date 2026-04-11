@@ -93,7 +93,7 @@ app.get("/callback", async (c) => {
     // TODO: Save to MongoDB
     console.log("Us logged in:", profile.display_name);
     console.log("Top Artists:", topArtists.items.map((a: any) => a.name));
-    return c.redirect(`${env["SPOTIFY_REDIRECT_URI"]}/dashboard`);
+    return c.redirect(`${env["FRONTEND_URL"]}/dashboard`);
 });
 
 app.get("/api/me", async (c) => {
