@@ -93,9 +93,10 @@ app.get("/callback", async (c) => {
     // TODO: Save to MongoDB
     console.log("Us logged in:", profile.display_name);
     console.log("Top Artists:", topArtists.items.map((a: any) => a.name));
-    return c.redirect("https://beckmanlab.dev/dashboard");
+    return c.redirect(`${env["FRONTEND_URL"]}/dashboard`);
 });
 
+/*
 app.get("/api/me", async (c) => {
     const token = getCookie(c, "spotify_token");
     if (!token) {
@@ -109,6 +110,36 @@ app.get("/api/me", async (c) => {
     });
     const profile = await res.json();
     return c.json(profile);
+});
+*/
+
+// new endpoint, old one commented out
+app.get("/api/me", async (c) => {
+  const token = getCookie(c, "spotify_token");
+  if (!token) return c.json({ error: "Not authenticated" }, 401);
+
+  const [profileRes, artistsRes, tracksRes] = await Promise.all([
+    fetch("https://api.spotify.com/v1/me", {
+      headers: { "Authorization": `Bearer ${token}` },
+    }),
+    fetch("https://api.spotify.com/v1/me/top/artists?limit=20", {
+      headers: { "Authorization": `Bearer ${token}` },
+    }),
+    fetch("https://api.spotify.com/v1/me/top/tracks?limit=20", {
+      headers: { "Authorization": `Bearer ${token}` },
+    }),
+  ]);
+
+  const [profile, artists, tracks] = await Promise.all([
+    profileRes.json(), artistsRes.json(), tracksRes.json()
+  ]);
+
+  // TODO: swap this out for MongoDB reads/writes later
+  return c.json({
+    profile,
+    topArtists: artists.items,
+    topTracks: tracks.items,
+  });
 });
 
 // Start server
