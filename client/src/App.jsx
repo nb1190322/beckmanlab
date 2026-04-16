@@ -2,14 +2,33 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TopTracks from './components/TopTracks';
 import "./App.css";
+
 import SharedArtists from './components/SharedArtists';
 import SharedGenres from './components/SharedGenres';
 import CompatibilityScore from './components/CompatibilityScore';
 import UniqueArtists from './components/UniqueArtists';
 import SharedTracks from './components/SharedTracks';
+import AddFriend from './components/AddFriend';
+import Notifications from './components/Notifications';
 
 function useSpotifyData() {
   const [data, setData] = useState(null);
+
+
+function Landing() {
+  return (
+    <div className="container">
+      <h1> Friend Wrapped </h1>
+      <p> Compare your music taste with your friends and discover new music together! </p>
+      <a href="/api/login">
+        <button className="spotify-btn">Login with Spotify</button>
+      </a>
+    </div>
+  )
+}
+
+function Dashboard() {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -29,11 +48,21 @@ function useSpotifyData() {
       });
   }, []);
 
-  return { data, loading, error };
+  if (loading) return <div className="container"><p>Loading...</p></div>;
+  if (error) return <div className="container"><p>Not logged in. <a href="/api/login">Login here</a></p></div>;
 }
+
 
 function Landing() {
   return (
+    <div>
+      <nav className="navbar">
+        <span className="nav-title">Friend Wrapped</span>
+        <div className="nav-actions">
+          <AddFriend />
+          <Notifications />
+        </div>
+      </nav>
     <div className="container">
       <h1>Friend Wrapped</h1>
       <p>Compare your music taste with your friends and discover new music together!</p>
@@ -81,6 +110,7 @@ function Dashboard() {
           friendArtists={null}
         />
       </div>
+    </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 .env
 node_modules/
-clien/dist/
+client/dist/
 .deno
+README.md
