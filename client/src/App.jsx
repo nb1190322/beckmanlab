@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import "./App.css";
+import AddFriend from './components/AddFriend';
+import Notifications from './components/Notifications';
 
 function Landing() {
   return (
@@ -41,11 +43,20 @@ function Dashboard() {
   if (error) return <div className="container"><p>Not logged in. <a href="/api/login">Login here</a></p></div>;
 
   return (
+    <div>
+      <nav className="navbar">
+        <span className="nav-title">Friend Wrapped</span>
+        <div className="nav-actions">
+          <AddFriend />
+          <Notifications />
+        </div>
+      </nav>
     <div className="container">
       <h1>Welcome, {user.display_name}!</h1>
       <img src={user.images[0]?.url} alt="profile" className="avatar" />
       <p>{user.followers?.total} followers on Spotify</p>
       <p>Country: {user.country} </p>
+    </div>
     </div>
   );
 }
