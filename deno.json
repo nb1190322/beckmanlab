@@ -6,6 +6,7 @@
     "hono/cors": "npm:hono/cors",
     "hono/cookie": "npm:hono/cookie",
     "load": "https://deno.land/std@0.224.0/dotenv/mod.ts",
-    "vite": "npm:vite@^5.4.21"
+    "vite": "npm:vite@^5.4.21",
+    "mongoose": "npm:mongoose"
   }
 }
