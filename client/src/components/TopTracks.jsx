@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 
 export default function TopTracks({ tracks, title }) {
   return (
-    <div className="track-table-wrap">
-      <p className="track-table-title">{title}</p>
-      <table>
+    <div className="db-card">
+      <p className="db-card-title">{title}</p>
+      <table className="db-table">
         <thead>
           <tr>
-            <th>#</th>
+            <th style={{ width: 28 }}>#</th>
             <th>Track</th>
             <th>Artist</th>
             <th>Album</th>
@@ -15,15 +15,15 @@ export default function TopTracks({ tracks, title }) {
         </thead>
         <tbody>
           {tracks.length === 0 ? (
-            <tr className="empty-row">
+            <tr className="db-empty-row">
               <td>—</td>
               <td colSpan={3}>Waiting for friend to connect</td>
             </tr>
           ) : (
             tracks.map((track, i) => (
               <tr key={track.id}>
-                <td>{i + 1}</td>
-                <td className="track-name">{track.name}</td>
+                <td className="db-row-num">{i + 1}</td>
+                <td className="db-track-name">{track.name}</td>
                 <td>{track.artists.map((a) => a.name).join(', ')}</td>
                 <td>{track.album.name}</td>
               </tr>

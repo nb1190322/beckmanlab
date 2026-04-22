@@ -1,18 +1,15 @@
 import PropTypes from 'prop-types';
 
 export default function CompatibilityScore({ score }) {
-  if (score === null || score === undefined) return (
-    <div className="track-table-wrap">
-      <p className="track-table-title">Compatibility score</p>
-      <p className="empty-state">Waiting for friend to connect</p>
-    </div>
-  );
-
   return (
-    <div className="track-table-wrap">
-      <p className="track-table-title">Compatibility score</p>
-      <p className="compatibility-score">{Math.round(score)}%</p>
-    </div>
+      <div className="db-card">
+          <p className="db-card-title">Compatibility Score</p>
+          {score === null || score === undefined ? (
+              <p className="db-empty">Waiting for a friend to connect...</p>
+          ) : (
+              <p className="db-compat-score">{Math.round(score)}%</p>
+          )}
+      </div>
   );
 }
 
