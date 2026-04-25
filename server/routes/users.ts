@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
-import { getAuthUser } from "../helpers.ts";
 import User from "../models/User.ts";
 
 export const userRoutes = () => {
@@ -44,26 +43,39 @@ export const userRoutes = () => {
         });
         const profile = await res.json();
 
-        const user = await User.findOne({ spotifyId: profile.id })
-            .select("topArtists topTracks");
-
+        const user = await User.findOne({ spotifyId: profile.id }).lean();
         if (!user) return c.json({ error: "User not found" }, 404);
 
+        const artists = user.topArtists as any;
+        const tracks = user.topTracks as any;
+
+        const formatArtist = (a: any) => ({
+            id: a.id,
+            name: a.name,
+            imageUrl: a.imageUrl,
+            popularity: a.popularity,
+        });
+
+        const formatTrack = (t: any) => ({
+            id: t.id,
+            name: t.name,
+            artists: (t.artists as string[]).map((name) => ({ name })),
+            album: { name: t.albumName },
+            albumImage: t.albumImage,
+            popularity: t.popularity,
+        });
+
         return c.json({
-            topArtists: user.topArtists.map((a: any) => ({
-                id: a.id,
-                name: a.name,
-                imageUrl: a.imageUrl,
-                popularity: a.popularity,
-            })),
-            topTracks: user.topTracks.map((t: any) => ({
-                id: t.id,
-                name: t.name,
-                artists: t.artists.map((name: string) => ({ name })),
-                album: { name: t.albumName },
-                albumImage: t.albumImage,
-                popularity: t.popularity,
-            })),
+            topArtists: {
+                short:  (artists.short  || []).map(formatArtist),
+                medium: (artists.medium || []).map(formatArtist),
+                long:   (artists.long   || []).map(formatArtist),
+            },
+            topTracks: {
+                short:  (tracks.short  || []).map(formatTrack),
+                medium: (tracks.medium || []).map(formatTrack),
+                long:   (tracks.long   || []).map(formatTrack),
+            },
         });
     });
 

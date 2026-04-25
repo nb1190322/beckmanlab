@@ -11,13 +11,13 @@ export default function UniqueArtists({ yourArtists, friendArtists, yourName, fr
                     <div>
                         <p className="db-unique-label">{yourName} only</p>
                         <ul className="db-unique-list">
-                            {yourArtists.map((a) => <li key={a.id}>{a.name}</li>)}
+                            {yourArtists.slice(0, 20).map((a) => <li key={a.id}>{a.name}</li>)}
                         </ul>
                     </div>
                     <div>
                         <p className="db-unique-label">{friendName} only</p>
                         <ul className="db-unique-list">
-                            {friendArtists.map((a) => <li key={a.id}>{a.name}</li>)}
+                            {friendArtists.slice(0, 20).map((a) => <li key={a.id}>{a.name}</li>)}
                         </ul>
                     </div>
                 </div>
@@ -25,6 +25,7 @@ export default function UniqueArtists({ yourArtists, friendArtists, yourName, fr
         </div>
     );
 }
+
 UniqueArtists.propTypes = {
     yourArtists: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })).isRequired,
     friendArtists: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })),

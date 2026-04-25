@@ -3,15 +3,12 @@ import TopTracks from './components/TopTracks';
 import "./App.css";
 import { useSpotifyData } from "./hooks/useSpotifyData.js";
 
-import SharedArtists from './components/SharedArtists';
-import SharedGenres from './components/SharedGenres';
-import CompatibilityScore from './components/CompatibilityScore';
-import UniqueArtists from './components/UniqueArtists';
-import SharedTracks from './components/SharedTracks';
 import AddFriend from './components/AddFriend';
 import Notifications from './components/Notifications';
 import Landing from './components/Landing';
 import "./css/Dashboard.css";
+import FriendsList from "./components/FriendsList.jsx";
+import Compare from "./components/Compare.jsx";
 
 function nameToColor(name = "") {
     let hash = 0;
@@ -53,6 +50,7 @@ function Dashboard() {
                 </span>
                 <div className="db-nav-actions">
                     <AddFriend />
+                    <FriendsList />
                     <Notifications />
                     <button className="db-icon-btn" onClick={logout}>Sign Out</button>
                 </div>
@@ -68,31 +66,40 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* Compatibility */}
-                <CompatibilityScore score={null} />
+                {/* Top Tracks & Artists side by side */}
+                <span className="db-section-label">✦ Your Top Tracks</span>
+                <TopTracks
+                    title="Your top tracks"
+                    tracks={topData?.topTracks?.medium || []}
+                />
 
-                {/* Top Tracks */}
-                <span className="db-section-label">✦ Top Tracks</span>
-                <div className="db-grid">
-                    <TopTracks title="Your top tracks" tracks={topData?.topTracks || []} />
-                    <TopTracks title="Friend's top tracks" tracks={[]} />
+                <span className="db-section-label">✦ Your Top Artists</span>
+                <div className="db-card">
+                    <p className="db-card-title">Top Artists</p>
+                    <table className="db-table">
+                        <colgroup>
+                            <col style={{ width: "36px" }} />
+                            <col />
+                        </colgroup>
+                        <thead><tr><th>#</th><th>Artist</th></tr></thead>
+                        <tbody>
+                        {(topData?.topArtists?.medium || []).slice(0, 20).map((a, i) => (
+                            <tr key={a.id}>
+                                <td className="db-row-num">{i + 1}</td>
+                                <td className="db-track-name">{a.name}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
 
-                {/* Shared */}
-                <span className="db-section-label">✦ In Common</span>
-                <div className="db-grid">
-                    <SharedArtists artists={null} />
-                    <SharedGenres genres={null} />
-                </div>
-
-                <div className="db-grid">
-                    <SharedTracks tracks={null} />
-                    <UniqueArtists
-                        yourName={user?.display_name}
-                        yourArtists={topData?.topArtists || []}
-                        friendName="Friend"
-                        friendArtists={null}
-                    />
+                {/* CTA to compare with a friend */}
+                <div className="db-card" style={{ textAlign: "center", padding: "32px" }}>
+                    <p className="db-card-title">Compare with a friend</p>
+                    <p className="db-empty" style={{ marginBottom: "16px" }}>
+                        Select a friend from the friends list to see your compatibility score and shared music taste!
+                    </p>
+                    <FriendsList inline />
                 </div>
             </div>
         </div>
@@ -105,6 +112,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/compare/:spotifyId" element={<Compare />} />
             </Routes>
         </BrowserRouter>
     );

@@ -529,3 +529,82 @@
     .db-body { padding: 32px 20px 60px; }
     .db-navbar { padding: 16px 20px; }
 }
+
+/* ── Compare VS header ── */
+.cmp-vs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 32px 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+.cmp-vs-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(29,185,84,0.04) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.cmp-vs-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.cmp-vs-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f0f0f0;
+}
+
+.cmp-vs-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.cmp-vs-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--score-color, var(--green));
+    text-shadow: 0 0 40px color-mix(in srgb, var(--score-color, #1DB954) 30%, transparent);
+}
+
+.cmp-vs-label {
+    font-size: 0.78rem;
+    color: var(--muted-mid);
+    letter-spacing: 0.05em;
+    font-weight: 300;
+}
+
+/* ── Shared items highlight ── */
+.cmp-shared {
+    color: #1DB954 !important;
+}
+
+/* ── Fix # column ── */
+.db-table colgroup col:first-child {
+    width: 36px;
+}
+.db-table th:first-child,
+.db-table td:first-child {
+    width: 36px;
+    min-width: 36px;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 8px;
+}

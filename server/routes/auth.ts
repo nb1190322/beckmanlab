@@ -45,24 +45,50 @@ export const authRoutes = (env: Record<string, string>) => {
         if (tokenData.error) return c.json({ error: tokenData.error }, 400);
 
         const accessToken = tokenData.access_token;
+        const headers = { "Authorization": `Bearer ${accessToken}` };
 
-        const [profileRes, topArtistsRes, topTracksRes] = await Promise.all([
-            fetch("https://api.spotify.com/v1/me", {
-                headers: { "Authorization": `Bearer ${accessToken}` },
-            }),
-            fetch("https://api.spotify.com/v1/me/top/artists?limit=20", {
-                headers: { "Authorization": `Bearer ${accessToken}` },
-            }),
-            fetch("https://api.spotify.com/v1/me/top/tracks?limit=20", {
-                headers: { "Authorization": `Bearer ${accessToken}` },
-            }),
+        const [profileRes,
+            artistsShortRes, artistsMedRes, artistsLongRes,
+            tracksShortRes, tracksMedRes, tracksLongRes,
+        ] = await Promise.all([
+            fetch("https://api.spotify.com/v1/me", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term", { headers }),
+            fetch("https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term", { headers }),
         ]);
 
-        const [profile, topArtists, topTracks] = await Promise.all([
+        const [profile,
+            artistsShort, artistsMed, artistsLong,
+            tracksShort, tracksMed, tracksLong,
+        ] = await Promise.all([
             profileRes.json(),
-            topArtistsRes.json(),
-            topTracksRes.json(),
+            artistsShortRes.json(), artistsMedRes.json(), artistsLongRes.json(),
+            tracksShortRes.json(), tracksMedRes.json(), tracksLongRes.json(),
         ]);
+
+        console.log("Profile:", profile.display_name);
+        console.log("Artists short:", artistsShort?.items?.length);
+        console.log("Artists short error:", artistsShort?.error);
+
+
+        const mapArtist = (a: any) => ({
+            id: a.id,
+            name: a.name,
+            imageUrl: a.images?.[0]?.url || "",
+            popularity: a.popularity,
+        });
+
+        const mapTrack = (t: any) => ({
+            id: t.id,
+            name: t.name,
+            artists: t.artists.map((a: any) => a.name),
+            albumName: t.album.name,
+            albumImage: t.album.images?.[0]?.url || "",
+            popularity: t.popularity,
+        });
 
         setCookie(c, "spotify_token", accessToken, {
             httpOnly: true,
@@ -78,20 +104,16 @@ export const authRoutes = (env: Record<string, string>) => {
                 displayName: profile.display_name,
                 email: profile.email,
                 profileImage: profile.images?.[0]?.url || "",
-                topArtists: topArtists.items.map((a: any) => ({
-                    id: a.id,
-                    name: a.name,
-                    imageUrl: a.images?.[0]?.url || "",
-                    popularity: a.popularity,
-                })),
-                topTracks: topTracks.items.map((t: any) => ({
-                    id: t.id,
-                    name: t.name,
-                    artists: t.artists.map((a: any) => a.name),
-                    albumName: t.album.name,
-                    albumImage: t.album.images?.[0]?.url || "",
-                    popularity: t.popularity,
-                })),
+                topArtists: {
+                    short:  (artistsShort.items || []).map(mapArtist),
+                    medium:  (artistsMed.items || []).map(mapArtist),
+                    long:  (artistsLong.items || []).map(mapArtist),
+                },
+                topTracks: {
+                    short:  (tracksShort.items || []).map(mapTrack),
+                    medium: (tracksMed.items || []).map(mapTrack),
+                    long:   (tracksLong.items || []).map(mapTrack),
+                },
                 lastUpdated: new Date(),
             },
             { upsert: true, new: true }
