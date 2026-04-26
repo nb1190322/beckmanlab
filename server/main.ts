@@ -6,7 +6,7 @@ import { authRoutes } from "./routes/auth.ts";
 import { userRoutes } from "./routes/users.ts";
 import { friendRoutes } from "./routes/friends.ts";
 
-const env = await load({ envPath: "./.env" });
+const env = await load({ envPath: "./server/.env" });
 
 await connectDB(env["MONGO_URI"]);
 

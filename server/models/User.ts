@@ -1,29 +1,36 @@
 import mongoose from "mongoose";
 
+const artistSchema = {
+    id: String,
+    name: String,
+    imageUrl: String,
+    popularity: Number,
+}
+
+const trackSchema = {
+    id: String,
+    name: String,
+    artists: [String],
+    albumName: String,
+    albumImage: String,
+    popularity: Number,
+}
+
 const userSchema = new mongoose.Schema({
     spotifyId: { type: String, required: true, unique: true },
     displayName: String,
     email: { type: String },
     profileImage: { type: String },
-    topArtists: [
-        {
-            id: String,
-            name: String,
-            genres: [String],
-            imageUrl: String,
-            popularity: Number,
-        }
-    ],
-    topTracks: [
-        {
-            id: String,
-            name: String,
-            artists: [String],
-            albumName: String,
-            albumImage: String,
-            popularity: Number,
-        }
-    ],
+    topArtists: {
+        short:  [artistSchema],
+        medium: [artistSchema],
+        long:   [artistSchema],
+    },
+    topTracks: {
+        short:  [trackSchema],
+        medium: [trackSchema],
+        long: [trackSchema],
+    },
     following: [{ type: String }],
     followers: [{ type: String }],
     pendingRequests: {

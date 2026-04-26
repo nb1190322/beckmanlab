@@ -41,6 +41,97 @@ p { color: #b3b3b3; font-size: 1.1rem; }
   border-radius: 50%;
 }
 
+.dashboard {
+  background: #121212;
+  min-height: 100vh;
+  padding: 32px;
+  font-family: sans-serif;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.profile-header h1 {
+  color: #fff;
+  margin: 0;
+  font-size: 24px;
+}
+
+.profile-header p {
+  color: #b3b3b3;
+  margin: 0;
+  font-size: 14px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.track-table-wrap {
+  background: #181818;
+  border-radius: 10px;
+  padding: 16px;
+  border: 0.5px solid #2a2a2a;
+}
+
+.track-table-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1db954;
+  margin: 0 0 14px;
+}
+
+.track-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.track-table-wrap th {
+  font-size: 11px;
+  color: #b3b3b3;
+  text-align: left;
+  padding: 0 8px 8px;
+  font-weight: 400;
+  border-bottom: 0.5px solid #2a2a2a;
+}
+
+.track-table-wrap td {
+  font-size: 13px;
+  color: #e0e0e0;
+  padding: 9px 8px;
+  border-bottom: 0.5px solid #1e1e1e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-table-wrap tr:last-child td {
+  border-bottom: none;
+}
+
+.track-name {
+  font-weight: 500;
+  color: #fff;
+}
+
+.empty-row td {
+  color: #444;
+  font-style: italic;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
